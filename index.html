@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Dinesh S | AR Business Card</title>
+
+    <!-- ============================================
+         A-Frame (3D engine) & AR.js (AR tracking)
+         ============================================ -->
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Font for a clean tech look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ============================================
+         1. LOADING SCREEN
+         Shown while camera / AR.js initializes
+         ============================================ -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring delay"></div>
+            <h2>Initializing AR</h2>
+            <p>Allow camera access to continue</p>
+        </div>
+    </div>
+
+    <!-- ============================================
+         2. SCAN INSTRUCTION OVERLAY
+         Guides the user to point at the Hiro marker
+         ============================================ -->
+    <div id="scan-overlay">
+        <div class="scan-frame">
+            <!-- Animated corner brackets -->
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+            <p class="scan-text">Point camera at the<br><strong>HIRO marker</strong></p>
+        </div>
+        <a href="marker.html" class="marker-link" target="_blank">
+            <i class="fas fa-qrcode"></i> View / Print Marker
+        </a>
+    </div>
+
+    <!-- ============================================
+         3. A-FRAME AR SCENE
+         3D elements that appear on the Hiro marker
+         ============================================ -->
+    <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+        vr-mode-ui="enabled: false"
+        renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true"
+        loading-screen="enabled: false"
+    >
+        <!-- Hiro Marker – built-in preset, no custom pattern needed -->
+        <a-marker preset="hiro" id="ar-marker"
+            smooth="true" smoothCount="5"
+            smoothTolerance="0.01" smoothThreshold="2">
+
+            <!-- ── Floating card container with up/down animation ── -->
+            <a-entity id="card-3d" position="0 0.15 0"
+                animation="property: position; to: 0 0.45 0; dir: alternate; dur: 2500; loop: true; easing: easeInOutSine">
+
+                <!-- Card background (dark matte) -->
+                <a-plane rotation="-90 0 0" width="1.7" height="1.05"
+                    material="color: #080c24; opacity: 0.92; side: double">
+                </a-plane>
+
+                <!-- Neon top edge -->
+                <a-plane rotation="-90 0 0" width="1.7" height="0.008" position="0 0.001 -0.521"
+                    material="color: #00e5ff; opacity: 0.95; side: double; emissive: #00e5ff; emissiveIntensity: 0.6">
+                </a-plane>
+
+                <!-- Neon bottom edge -->
+                <a-plane rotation="-90 0 0" width="1.7" height="0.008" position="0 0.001 0.521"
+                    material="color: #00e5ff; opacity: 0.95; side: double; emissive: #00e5ff; emissiveIntensity: 0.6">
+                </a-plane>
+
+                <!-- Accent line (left vertical) -->
+                <a-plane rotation="-90 0 0" width="0.006" height="1.05" position="-0.847 0.001 0"
+                    material="color: #76ff03; opacity: 0.35; side: double">
+                </a-plane>
+
+                <!-- Name -->
+                <a-text value="DINESH S" position="0 0.003 -0.3" rotation="-90 0 0"
+                    align="center" color="#FFFFFF" width="2.4"
+                    font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+                </a-text>
+
+                <!-- Title line 1 -->
+                <a-text value="AI & ML Engineer | Full-Stack Developer" position="0 0.003 -0.08" rotation="-90 0 0"
+                    align="center" color="#00e5ff" width="1.15">
+                </a-text>
+
+                <!-- Title line 2 -->
+                <a-text value="Data Science Enthusiast" position="0 0.003 0.08" rotation="-90 0 0"
+                    align="center" color="#64b5f6" width="0.95">
+                </a-text>
+
+                <!-- Location -->
+                <a-text value="Chennai, Tamil Nadu, India" position="0 0.003 0.28" rotation="-90 0 0"
+                    align="center" color="#7986cb" width="0.85">
+                </a-text>
+
+                <!-- Tap hint (pulsing) -->
+                <a-text value="[ Tap Screen for Contact Info ]" position="0 0.003 0.44" rotation="-90 0 0"
+                    align="center" color="#00e5ff" width="0.65"
+                    animation="property: material.opacity; from: 1; to: 0.25; dir: alternate; dur: 1200; loop: true">
+                </a-text>
+            </a-entity>
+
+            <!-- ── Rotating ring 1 (cyan, clockwise) ── -->
+            <a-ring position="0 0.3 0" rotation="-90 0 0"
+                radius-inner="1.0" radius-outer="1.02"
+                material="color: #00e5ff; opacity: 0.22; side: double"
+                animation="property: rotation; to: -90 0 360; loop: true; dur: 10000; easing: linear">
+            </a-ring>
+
+            <!-- ── Rotating ring 2 (green, counter-clockwise) ── -->
+            <a-ring position="0 0.3 0" rotation="-90 0 0"
+                radius-inner="1.06" radius-outer="1.075"
+                material="color: #76ff03; opacity: 0.14; side: double"
+                animation="property: rotation; to: -90 0 -360; loop: true; dur: 14000; easing: linear">
+            </a-ring>
+
+            <!-- ── Corner brackets (futuristic frame) ── -->
+            <!-- Top-left -->
+            <a-entity position="-0.88 0.15 -0.56">
+                <a-plane rotation="-90 0 0" width="0.14" height="0.005" position="0.07 0 0"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+                <a-plane rotation="-90 0 0" width="0.005" height="0.14" position="0 0 0.07"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+            </a-entity>
+            <!-- Top-right -->
+            <a-entity position="0.88 0.15 -0.56">
+                <a-plane rotation="-90 0 0" width="0.14" height="0.005" position="-0.07 0 0"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+                <a-plane rotation="-90 0 0" width="0.005" height="0.14" position="0 0 0.07"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+            </a-entity>
+            <!-- Bottom-left -->
+            <a-entity position="-0.88 0.15 0.56">
+                <a-plane rotation="-90 0 0" width="0.14" height="0.005" position="0.07 0 0"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+                <a-plane rotation="-90 0 0" width="0.005" height="0.14" position="0 0 -0.07"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+            </a-entity>
+            <!-- Bottom-right -->
+            <a-entity position="0.88 0.15 0.56">
+                <a-plane rotation="-90 0 0" width="0.14" height="0.005" position="-0.07 0 0"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+                <a-plane rotation="-90 0 0" width="0.005" height="0.14" position="0 0 -0.07"
+                    material="color: #00e5ff; opacity: 0.55; side: double"></a-plane>
+            </a-entity>
+
+        </a-marker>
+
+        <!-- Camera entity (required by AR.js) -->
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- ============================================
+         4. HTML OVERLAY – INTERACTIVE CONTACT CARD
+         Slides up from the bottom when marker detected
+         ============================================ -->
+    <div id="card-overlay" class="card-hidden">
+        <!-- Drag handle (visual only) -->
+        <div class="drag-handle"></div>
+
+        <div class="ar-card">
+            <!-- Close / minimize button -->
+            <button class="close-btn" id="close-card" aria-label="Close card">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+
+            <!-- ── Profile header ── -->
+            <div class="card-header">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Available</span>
+                </div>
+                <h1 class="name">DINESH S</h1>
+                <p class="title">AI &amp; Machine Learning Engineer</p>
+                <p class="subtitle">Full-Stack Developer &nbsp;|&nbsp; Data Science Enthusiast</p>
+                <p class="location">
+                    <i class="fas fa-map-marker-alt"></i> Chennai, Tamil Nadu, India
+                </p>
+            </div>
+
+            <!-- Neon divider -->
+            <div class="neon-divider"></div>
+
+            <!-- ── Contact action buttons (2×4 grid) ── -->
+            <div class="contact-grid">
+                <a href="tel:+918056129665" class="contact-btn btn-call">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>Call</span>
+                </a>
+                <a href="https://wa.me/918056129665" target="_blank" rel="noopener" class="contact-btn btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="mailto:personalaccdinesh@gmail.com" class="contact-btn btn-email">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </a>
+                <a href="https://www.dinesh-ai.tech" target="_blank" rel="noopener" class="contact-btn btn-portfolio">
+                    <i class="fas fa-globe"></i>
+                    <span>Portfolio</span>
+                </a>
+                <a href="https://github.com/itzdineshx" target="_blank" rel="noopener" class="contact-btn btn-github">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://linkedin.com/in/dinesh-xo" target="_blank" rel="noopener" class="contact-btn btn-linkedin">
+                    <i class="fab fa-linkedin-in"></i>
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://leetcode.com/u/dinesh-xo/" target="_blank" rel="noopener" class="contact-btn btn-leetcode">
+                    <i class="fas fa-code"></i>
+                    <span>LeetCode</span>
+                </a>
+                <a href="https://instagram.com/dkverse7" target="_blank" rel="noopener" class="contact-btn btn-instagram">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+            </div>
+
+            <!-- ── Info panel toggle ── -->
+            <button class="info-toggle" id="info-toggle">
+                <i class="fas fa-chevron-down"></i>
+                <span>More Info</span>
+            </button>
+
+            <!-- Hidden info panel (expandable) -->
+            <div class="info-panel" id="info-panel">
+                <div class="info-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>B.Tech AI &amp; Data Science – DMI College of Engineering (CGPA: 8.5)</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Hackathon Winner &nbsp;|&nbsp; AI Innovator</span>
+                </div>
+            </div>
+
+            <!-- ── Voice intro button ── -->
+            <button class="voice-btn" id="voice-btn">
+                <i class="fas fa-volume-up"></i>
+                <span>Voice Intro</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         5. JAVASCRIPT
+         ============================================ -->
+    <script src="app.js"></script>
+
+</body>
+</html>

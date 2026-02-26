@@ -1,0 +1,629 @@
+/* ============================================
+   AR VISITING CARD – STYLE SHEET
+   Theme: Dark-tech with neon cyan/green accents
+   ============================================ */
+
+/* ---------- CSS VARIABLES ---------- */
+:root {
+    --bg-dark: #060a1a;
+    --bg-card: rgba(8, 12, 36, 0.88);
+    --neon-cyan: #00e5ff;
+    --neon-green: #76ff03;
+    --text-primary: #e8eaf6;
+    --text-secondary: #90a4ae;
+    --radius-lg: 20px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --glass-border: rgba(0, 229, 255, 0.18);
+    --font-heading: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- RESET / BASE ---------- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-body);
+    background: #000;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* Prevent A-Frame from adding extra styles */
+a-scene {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* ============================================
+   1.  LOADING SCREEN
+   ============================================ */
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    text-align: center;
+    position: relative;
+}
+
+.loader-content h2 {
+    font-family: var(--font-heading);
+    color: var(--neon-cyan);
+    font-size: 1.15rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.loader-content p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Pulsing ring animation */
+.pulse-ring {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-cyan);
+    margin: 0 auto 24px;
+    animation: pulseRing 1.8s ease-out infinite;
+}
+
+.pulse-ring.delay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 0.5s;
+}
+
+@keyframes pulseRing {
+    0%   { transform: scale(0.6); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+.pulse-ring.delay {
+    left: 50%;
+    transform: translateX(-50%) scale(0.6);
+}
+@keyframes pulseRingDelay {
+    0%   { transform: translateX(-50%) scale(0.6); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1.5); opacity: 0; }
+}
+.pulse-ring.delay {
+    animation-name: pulseRingDelay;
+}
+
+
+/* ============================================
+   2.  SCAN INSTRUCTION OVERLAY
+   ============================================ */
+#scan-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#scan-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scan-frame {
+    width: 220px;
+    height: 220px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scanPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes scanPulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
+}
+
+/* Corner bracket styling */
+.corner {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-color: var(--neon-cyan);
+    border-style: solid;
+    border-width: 0;
+}
+.corner.tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; border-radius: 4px 0 0 0; }
+.corner.tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; border-radius: 0 4px 0 0; }
+.corner.bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; border-radius: 0 0 0 4px; }
+.corner.br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 4px 0; }
+
+.scan-text {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.5;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+}
+
+.scan-text strong {
+    color: var(--neon-cyan);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+.marker-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 28px;
+    color: var(--neon-cyan);
+    font-size: 0.85rem;
+    text-decoration: none;
+    padding: 8px 18px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    background: rgba(0, 229, 255, 0.06);
+    pointer-events: all;
+    transition: background 0.25s, box-shadow 0.25s;
+}
+
+.marker-link:active {
+    background: rgba(0, 229, 255, 0.15);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.2);
+}
+
+
+/* ============================================
+   3.  CARD OVERLAY (Bottom Sheet)
+   ============================================ */
+#card-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    max-height: 78vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    transition: transform 0.55s var(--transition-smooth),
+                opacity 0.4s ease;
+}
+
+/* Hide / show states */
+#card-overlay.card-hidden {
+    transform: translateY(110%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+#card-overlay.card-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Drag handle */
+.drag-handle {
+    width: 42px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 2px;
+    margin: 10px auto 4px;
+}
+
+/* The card itself – Glassmorphism */
+.ar-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border: 1px solid var(--glass-border);
+    border-bottom: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 18px 20px 28px;
+    position: relative;
+    box-shadow:
+        0 -4px 40px rgba(0, 229, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Close / minimize button */
+.close-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.close-btn:active {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--neon-cyan);
+}
+
+
+/* ============================================
+   4.  CARD HEADER – Profile Info
+   ============================================ */
+.card-header {
+    text-align: center;
+    padding-bottom: 14px;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    background: rgba(118, 255, 3, 0.08);
+    border: 1px solid rgba(118, 255, 3, 0.2);
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 8px rgba(118, 255, 3, 0.6);
+    animation: statusBlink 2s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+.status-text {
+    font-size: 0.7rem;
+    color: var(--neon-green);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+}
+
+.title {
+    font-size: 0.92rem;
+    color: var(--neon-cyan);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.subtitle {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.location {
+    font-size: 0.78rem;
+    color: #7986cb;
+}
+
+.location i {
+    margin-right: 4px;
+    font-size: 0.72rem;
+}
+
+
+/* ============================================
+   5.  NEON DIVIDER
+   ============================================ */
+.neon-divider {
+    height: 1px;
+    margin: 12px 0 16px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--neon-cyan) 30%,
+        var(--neon-green) 70%,
+        transparent 100%
+    );
+    opacity: 0.4;
+}
+
+
+/* ============================================
+   6.  CONTACT BUTTONS GRID
+   ============================================ */
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.contact-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 12px 4px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: transform 0.2s, box-shadow 0.3s, background 0.25s, border-color 0.3s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.contact-btn i {
+    font-size: 1.15rem;
+}
+
+.contact-btn span {
+    white-space: nowrap;
+}
+
+/* Tap feedback */
+.contact-btn:active,
+.contact-btn.tapped {
+    transform: scale(0.93);
+}
+
+/* ── Individual button accent colors ── */
+.btn-call        { --accent: #4caf50; }
+.btn-whatsapp    { --accent: #25d366; }
+.btn-email       { --accent: #ea4335; }
+.btn-portfolio   { --accent: #00e5ff; }
+.btn-github      { --accent: #c9d1d9; }
+.btn-linkedin    { --accent: #0a66c2; }
+.btn-leetcode    { --accent: #ffa116; }
+.btn-instagram   { --accent: #e1306c; }
+
+.contact-btn i {
+    color: var(--accent);
+    filter: drop-shadow(0 0 4px var(--accent));
+}
+
+.contact-btn:active,
+.contact-btn.tapped {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+
+/* ============================================
+   7.  INFO TOGGLE & PANEL
+   ============================================ */
+.info-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    margin-bottom: 4px;
+}
+
+.info-toggle i {
+    font-size: 0.65rem;
+    transition: transform 0.35s var(--transition-smooth);
+}
+
+.info-toggle.open i {
+    transform: rotate(180deg);
+}
+
+.info-toggle:active {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--neon-cyan);
+}
+
+/* Info panel collapse / expand */
+.info-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s var(--transition-smooth),
+                padding 0.35s ease;
+    padding: 0 4px;
+}
+
+.info-panel.open {
+    max-height: 200px;
+    padding: 10px 4px 6px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.35;
+}
+
+.info-item i {
+    color: var(--neon-cyan);
+    font-size: 0.82rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+
+/* ============================================
+   8.  VOICE INTRO BUTTON
+   ============================================ */
+.voice-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px;
+    margin-top: 10px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.08), rgba(118, 255, 3, 0.05));
+    color: var(--neon-cyan);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.3s;
+}
+
+.voice-btn i {
+    font-size: 0.95rem;
+}
+
+.voice-btn:active {
+    background: rgba(0, 229, 255, 0.15);
+}
+
+/* Speaking animation */
+.voice-btn.speaking {
+    animation: speakingPulse 0.7s ease-in-out infinite alternate;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+}
+
+@keyframes speakingPulse {
+    from { border-color: var(--glass-border); }
+    to   { border-color: var(--neon-cyan); }
+}
+
+
+/* ============================================
+   9.  SCROLLBAR STYLING (card overlay)
+   ============================================ */
+#card-overlay::-webkit-scrollbar {
+    width: 3px;
+}
+#card-overlay::-webkit-scrollbar-track {
+    background: transparent;
+}
+#card-overlay::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.2);
+    border-radius: 3px;
+}
+
+
+/* ============================================
+   10. RESPONSIVE TWEAKS
+   ============================================ */
+@media (max-width: 360px) {
+    .contact-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+    .contact-btn {
+        padding: 10px 2px;
+        font-size: 0.6rem;
+    }
+    .contact-btn i {
+        font-size: 1rem;
+    }
+    .name {
+        font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 480px) {
+    .ar-card {
+        max-width: 420px;
+        margin: 0 auto;
+        border-radius: var(--radius-lg);
+        border-bottom: 1px solid var(--glass-border);
+        margin-bottom: 12px;
+    }
+    #card-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+
+/* ============================================
+   11. ANIMATIONS (entrance for card items)
+   ============================================ */
+.card-visible .card-header   { animation: fadeSlideUp 0.45s 0.1s both; }
+.card-visible .neon-divider   { animation: fadeSlideUp 0.4s 0.2s both; }
+.card-visible .contact-grid   { animation: fadeSlideUp 0.45s 0.25s both; }
+.card-visible .info-toggle    { animation: fadeSlideUp 0.4s 0.35s both; }
+.card-visible .voice-btn      { animation: fadeSlideUp 0.4s 0.4s both; }
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
