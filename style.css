@@ -122,6 +122,125 @@ a-scene {
 
 
 /* ============================================
+   1b. CAMERA ERROR SCREEN
+   ============================================ */
+#camera-error {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    padding: 24px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#camera-error.camera-error-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#camera-error.camera-error-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.error-content {
+    max-width: 380px;
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 2.8rem;
+    margin-bottom: 12px;
+}
+
+.error-content h2 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: #ff5252;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.error-content > p {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.error-tips {
+    text-align: left;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+}
+
+.error-tips h3 {
+    font-size: 0.82rem;
+    color: var(--neon-cyan);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.error-tips ul {
+    padding-left: 16px;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.7;
+}
+
+.error-tips li {
+    margin-bottom: 4px;
+}
+
+.error-tips strong {
+    color: var(--text-primary);
+}
+
+.retry-btn, .demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    margin: 0 6px 10px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.retry-btn {
+    background: rgba(0, 229, 255, 0.1);
+    color: var(--neon-cyan);
+}
+
+.retry-btn:active {
+    background: rgba(0, 229, 255, 0.2);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.2);
+}
+
+.demo-btn {
+    background: rgba(118, 255, 3, 0.08);
+    color: var(--neon-green);
+    border-color: rgba(118, 255, 3, 0.2);
+}
+
+.demo-btn:active {
+    background: rgba(118, 255, 3, 0.18);
+    box-shadow: 0 0 16px rgba(118, 255, 3, 0.15);
+}
+
+
+/* ============================================
    2.  SCAN INSTRUCTION OVERLAY
    ============================================ */
 #scan-overlay {

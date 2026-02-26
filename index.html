@@ -37,6 +37,33 @@
     </div>
 
     <!-- ============================================
+         1b. CAMERA ERROR SCREEN
+         Shown when camera access fails
+         ============================================ -->
+    <div id="camera-error" class="camera-error-hidden">
+        <div class="error-content">
+            <div class="error-icon">⚠️</div>
+            <h2>Camera Access Failed</h2>
+            <p id="error-reason">Could not access your camera.</p>
+            <div class="error-tips">
+                <h3>Try these fixes:</h3>
+                <ul>
+                    <li id="tip-https" style="display:none">
+                        <strong>HTTPS Required:</strong> Camera only works over HTTPS.
+                        <br>Current URL is not secure.
+                    </li>
+                    <li>Tap the 🔒 icon in the address bar → Allow Camera</li>
+                    <li>On iOS, use <strong>Safari</strong> (Chrome iOS has limited camera)</li>
+                    <li>Close other apps using the camera</li>
+                    <li>Try refreshing the page</li>
+                </ul>
+            </div>
+            <button class="retry-btn" onclick="location.reload()">🔄 Retry</button>
+            <button class="demo-btn" id="demo-btn">👁️ View Card Without AR</button>
+        </div>
+    </div>
+
+    <!-- ============================================
          2. SCAN INSTRUCTION OVERLAY
          Guides the user to point at the Hiro marker
          ============================================ -->

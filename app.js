@@ -11,14 +11,92 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardOverlay  = document.getElementById('card-overlay');
     const loadingScreen = document.getElementById('loading-screen');
     const scanOverlay  = document.getElementById('scan-overlay');
+    const cameraError  = document.getElementById('camera-error');
     const closeCard    = document.getElementById('close-card');
     const infoToggle   = document.getElementById('info-toggle');
     const infoPanel    = document.getElementById('info-panel');
     const voiceBtn     = document.getElementById('voice-btn');
+    const demoBtn      = document.getElementById('demo-btn');
     const scene        = document.querySelector('a-scene');
 
     let markerVisible  = false;   // track marker state
     let cardManuallyDismissed = false;  // user closed the card
+
+
+    /* ============================================
+       0. HTTPS CHECK
+       Camera requires a Secure Context (HTTPS or localhost)
+       ============================================ */
+    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    if (!isSecure) {
+        console.warn('[AR] Page not served over HTTPS — camera will likely fail.');
+        const tipHttps = document.getElementById('tip-https');
+        if (tipHttps) tipHttps.style.display = 'list-item';
+    }
+
+
+    /* ============================================
+       0b. CAMERA ACCESS CHECK
+       Attempt to get camera before AR.js does, so we can show
+       a helpful error if it fails.
+       ============================================ */
+    async function checkCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            // Camera works — stop the test stream immediately
+            stream.getTracks().forEach(t => t.stop());
+            console.log('[AR] Camera access granted.');
+            return true;
+        } catch (err) {
+            console.error('[AR] Camera access failed:', err.name, err.message);
+            showCameraError(err);
+            return false;
+        }
+    }
+
+    function showCameraError(err) {
+        loadingScreen.classList.add('hidden');
+        scanOverlay.classList.add('hidden');
+        cameraError.classList.remove('camera-error-hidden');
+        cameraError.classList.add('camera-error-visible');
+
+        const reason = document.getElementById('error-reason');
+        if (err.name === 'NotAllowedError') {
+            reason.textContent = 'Camera permission was denied. Please allow camera access and refresh.';
+        } else if (err.name === 'NotFoundError') {
+            reason.textContent = 'No camera found on this device.';
+        } else if (err.name === 'NotReadableError') {
+            reason.textContent = 'Camera is in use by another app. Close it and retry.';
+        } else if (!isSecure) {
+            reason.textContent = 'Camera blocked — this page must be served over HTTPS.';
+        } else {
+            reason.textContent = 'Camera error: ' + (err.message || err.name);
+        }
+    }
+
+    // Run camera check
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        checkCamera();
+    } else {
+        // mediaDevices API not available (insecure context)
+        showCameraError({ name: 'NotSupportedError', message: 'Camera API not available. Use HTTPS.' });
+    }
+
+
+    /* ============================================
+       0c. DEMO MODE
+       Show the contact card without AR if camera fails
+       ============================================ */
+    if (demoBtn) {
+        demoBtn.addEventListener('click', () => {
+            cameraError.classList.add('camera-error-hidden');
+            cameraError.classList.remove('camera-error-visible');
+            // Show card overlay directly
+            cardOverlay.classList.remove('card-hidden');
+            cardOverlay.classList.add('card-visible');
+        });
+    }
+
 
     /* ============================================
        1. LOADING SCREEN
