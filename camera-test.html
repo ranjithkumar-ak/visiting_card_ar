@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Test</title>
+  <style>
+    body { margin:0; background:#000; color:#fff; font-family:Arial,sans-serif; display:flex; flex-direction:column; align-items:center; }
+    h1 { font-size:18px; margin:16px 0 8px; }
+    #status { font-size:14px; opacity:.9; margin-bottom:12px; text-align:center; padding:0 12px; }
+    video { width:100vw; height:70vh; object-fit:cover; background:#111; }
+    button { margin:12px; padding:10px 16px; border-radius:8px; border:1px solid #444; background:#1d1d1d; color:#fff; }
+  </style>
+</head>
+<body>
+  <h1>Camera Permission Test</h1>
+  <div id="status">Tap Start Camera.</div>
+  <video id="preview" autoplay playsinline muted></video>
+  <button id="start">Start Camera</button>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const video = document.getElementById('preview');
+
+    document.getElementById('start').addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false
+        });
+        video.srcObject = stream;
+        statusEl.textContent = 'Camera started successfully.';
+      } catch (err) {
+        statusEl.textContent = `Camera failed: ${err.name} - ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
