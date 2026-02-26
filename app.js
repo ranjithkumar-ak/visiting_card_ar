@@ -35,12 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    /* ============================================
-       0b. CAMERA ERROR DETECTION
-       Instead of grabbing the camera ourselves (which conflicts
-       with AR.js), we listen for AR.js camera errors and also
-       set a timeout – if the video never starts, show the error.
-       ============================================ */
+     /* ============================================
+         0b. CAMERA ERROR DETECTION
+         Use AR.js camera events and avoid manually grabbing camera,
+         which can conflict on mobile devices.
+         ============================================ */
     function showCameraError(reason) {
         loadingScreen.classList.add('hidden');
         scanOverlay.classList.add('hidden');
@@ -55,83 +54,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // If camera API doesn't even exist (non-HTTPS), show error immediately
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showCameraError('Camera API not available. This page must be opened over HTTPS.');
-    } else {
-        // Poll every 2s to check if AR.js video is rendering.
-        // Once video is playing, ensure it's visible.
-        let videoCheckCount = 0;
-        const videoChecker = setInterval(() => {
-            videoCheckCount++;
-            const video = document.querySelector('#arjs-video') || document.querySelector('a-scene video') || document.querySelector('video');
-
-            if (video && video.readyState >= 2 && video.videoWidth > 0) {
-                // Video is playing — make sure it's visible
-                console.log('[AR] Camera video is active:', video.videoWidth + 'x' + video.videoHeight);
-                video.style.display = 'block';
-                video.style.opacity = '1';
-                video.style.position = 'fixed';
-                video.style.top = '0';
-                video.style.left = '0';
-                video.style.width = '100vw';
-                video.style.height = '100vh';
-                video.style.objectFit = 'cover';
-                video.style.zIndex = '-1';
-                video.setAttribute('playsinline', '');
-                video.setAttribute('autoplay', '');
-                clearInterval(videoChecker);
-                return;
-            }
-
-            // After 15 seconds, give up and show error
-            if (videoCheckCount >= 8) {
-                clearInterval(videoChecker);
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(stream => {
-                        stream.getTracks().forEach(t => t.stop());
-                        // Camera works but AR.js failed to render — try forcing play
-                        if (video) {
-                            video.play().catch(() => {});
-                            console.log('[AR] Forced video play attempt.');
-                        } else {
-                            showCameraError('AR.js could not start the camera feed. Try refreshing the page.');
-                        }
-                    })
-                    .catch(err => {
-                        if (err.name === 'NotAllowedError') {
-                            showCameraError('Camera permission denied. Tap 🔒 in address bar → Allow Camera → Refresh.');
-                        } else if (err.name === 'NotFoundError') {
-                            showCameraError('No camera found on this device.');
-                        } else if (!isSecure) {
-                            showCameraError('Camera blocked — page must be served over HTTPS.');
-                        } else {
-                            showCameraError('Camera error: ' + (err.message || err.name));
-                        }
-                    });
-            }
-        }, 2000);
     }
 
+    // Listen for AR.js camera lifecycle events
+    if (scene) {
+        scene.addEventListener('camera-init', () => {
+            console.log('[AR] camera-init event received.');
+            if (cameraError) {
+                cameraError.classList.add('camera-error-hidden');
+                cameraError.classList.remove('camera-error-visible');
+            }
+        });
 
-    /* ============================================
-       0d. FORCE VIDEO PLAYBACK ON iOS
-       iOS requires a user gesture to start video.
-       We add a one-time touch listener that tries to play.
-       ============================================ */
-    let videoStarted = false;
-    function forceVideoPlay() {
-        if (videoStarted) return;
-        const video = document.querySelector('#arjs-video') || document.querySelector('video');
-        if (video) {
-            video.setAttribute('playsinline', '');
-            video.setAttribute('autoplay', '');
-            video.muted = true;
-            video.play().then(() => {
-                videoStarted = true;
-                console.log('[AR] Video playback started via user gesture.');
-            }).catch(e => console.warn('[AR] Video play failed:', e));
+        scene.addEventListener('camera-error', (event) => {
+            console.error('[AR] camera-error event:', event);
+            showCameraError('Camera could not be started. Check permission, close other camera apps, and refresh.');
+        });
+    }
+
+    // Fallback check: if no AR.js video appears after startup, show guidance
+    setTimeout(() => {
+        const video = document.querySelector('#arjs-video') || document.querySelector('a-scene video') || document.querySelector('video');
+        const hasVideo = !!(video && video.readyState >= 2 && video.videoWidth > 0);
+        if (!hasVideo && !markerVisible) {
+            showCameraError('No camera feed detected. Open this URL in Safari (iPhone) or Chrome (Android), then allow camera and refresh.');
         }
-    }
-    document.addEventListener('touchstart', forceVideoPlay, { once: true });
-    document.addEventListener('click', forceVideoPlay, { once: true });
+    }, 12000);
 
 
     /* ============================================
