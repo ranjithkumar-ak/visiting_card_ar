@@ -56,32 +56,82 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showCameraError('Camera API not available. This page must be opened over HTTPS.');
     } else {
-        // Give AR.js time to start the camera. If after 12s there's still
-        // no video playing, assume camera failed.
-        setTimeout(() => {
-            const video = document.querySelector('video');
-            const hasVideo = video && video.readyState >= 2 && video.videoWidth > 0;
-            if (!hasVideo && !markerVisible) {
-                // Check if it's a permission issue vs other error
+        // Poll every 2s to check if AR.js video is rendering.
+        // Once video is playing, ensure it's visible.
+        let videoCheckCount = 0;
+        const videoChecker = setInterval(() => {
+            videoCheckCount++;
+            const video = document.querySelector('#arjs-video') || document.querySelector('a-scene video') || document.querySelector('video');
+
+            if (video && video.readyState >= 2 && video.videoWidth > 0) {
+                // Video is playing — make sure it's visible
+                console.log('[AR] Camera video is active:', video.videoWidth + 'x' + video.videoHeight);
+                video.style.display = 'block';
+                video.style.opacity = '1';
+                video.style.position = 'fixed';
+                video.style.top = '0';
+                video.style.left = '0';
+                video.style.width = '100vw';
+                video.style.height = '100vh';
+                video.style.objectFit = 'cover';
+                video.style.zIndex = '-1';
+                video.setAttribute('playsinline', '');
+                video.setAttribute('autoplay', '');
+                clearInterval(videoChecker);
+                return;
+            }
+
+            // After 15 seconds, give up and show error
+            if (videoCheckCount >= 8) {
+                clearInterval(videoChecker);
                 navigator.mediaDevices.getUserMedia({ video: true })
                     .then(stream => {
-                        // Camera actually works — AR.js may just be slow, do nothing
                         stream.getTracks().forEach(t => t.stop());
+                        // Camera works but AR.js failed to render — try forcing play
+                        if (video) {
+                            video.play().catch(() => {});
+                            console.log('[AR] Forced video play attempt.');
+                        } else {
+                            showCameraError('AR.js could not start the camera feed. Try refreshing the page.');
+                        }
                     })
                     .catch(err => {
                         if (err.name === 'NotAllowedError') {
-                            showCameraError('Camera permission was denied. Tap the 🔒 icon in the address bar → Allow Camera, then refresh.');
+                            showCameraError('Camera permission denied. Tap 🔒 in address bar → Allow Camera → Refresh.');
                         } else if (err.name === 'NotFoundError') {
                             showCameraError('No camera found on this device.');
                         } else if (!isSecure) {
-                            showCameraError('Camera blocked — this page must be served over HTTPS.');
+                            showCameraError('Camera blocked — page must be served over HTTPS.');
                         } else {
                             showCameraError('Camera error: ' + (err.message || err.name));
                         }
                     });
             }
-        }, 12000);
+        }, 2000);
     }
+
+
+    /* ============================================
+       0d. FORCE VIDEO PLAYBACK ON iOS
+       iOS requires a user gesture to start video.
+       We add a one-time touch listener that tries to play.
+       ============================================ */
+    let videoStarted = false;
+    function forceVideoPlay() {
+        if (videoStarted) return;
+        const video = document.querySelector('#arjs-video') || document.querySelector('video');
+        if (video) {
+            video.setAttribute('playsinline', '');
+            video.setAttribute('autoplay', '');
+            video.muted = true;
+            video.play().then(() => {
+                videoStarted = true;
+                console.log('[AR] Video playback started via user gesture.');
+            }).catch(e => console.warn('[AR] Video play failed:', e));
+        }
+    }
+    document.addEventListener('touchstart', forceVideoPlay, { once: true });
+    document.addEventListener('click', forceVideoPlay, { once: true });
 
 
     /* ============================================

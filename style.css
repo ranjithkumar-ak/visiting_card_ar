@@ -37,12 +37,39 @@ html, body {
     touch-action: manipulation;
 }
 
-/* Prevent A-Frame from adding extra styles */
+/* ── AR.js video & scene rendering ──
+   AR.js injects a <video> and a <canvas>.
+   These rules make sure they fill the screen on mobile. */
 a-scene {
     position: fixed !important;
     top: 0; left: 0;
     width: 100% !important;
     height: 100% !important;
+    z-index: 0;
+}
+
+/* AR.js dynamically created video — must be visible & fullscreen */
+a-scene video,
+#arjs-video {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover !important;
+    z-index: -1 !important;
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* AR.js canvas overlay */
+a-scene canvas.a-canvas {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1 !important;
 }
 
 
