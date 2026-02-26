@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scene        = document.querySelector('a-scene');
 
     let markerVisible  = false;   // track marker state
-    let cardManuallyDismissed = false;  // user closed the card
+    let cardManuallyDismissed = true;  // keep overlay hidden by default
 
 
     /* ============================================
@@ -117,14 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // ── Marker found ──
         marker.addEventListener('markerFound', () => {
             markerVisible = true;
-            cardManuallyDismissed = false;
+            cardManuallyDismissed = true;
 
             // Hide scan instructions
             scanOverlay.classList.add('hidden');
-
-            // Show contact card (slide up)
-            cardOverlay.classList.remove('card-hidden');
-            cardOverlay.classList.add('card-visible');
 
             console.log('[AR] Marker detected');
         });

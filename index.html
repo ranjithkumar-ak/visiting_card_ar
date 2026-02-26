@@ -102,8 +102,14 @@
             smoothTolerance="0.01" smoothThreshold="2">
 
             <!-- ── Floating card container with up/down animation ── -->
-            <a-entity id="card-3d" position="0 0.15 0" rotation="90 0 0"
-                animation="property: position; to: 0 0.45 0; dir: alternate; dur: 2500; loop: true; easing: easeInOutSine">
+            <a-entity id="card-3d" position="0 0.26 0" rotation="90 0 0"
+                animation="property: position; to: 0 0.46 0; dir: alternate; dur: 2500; loop: true; easing: easeInOutSine"
+                animation__tilt="property: rotation; from: 90 -8 0; to: 90 8 0; dir: alternate; dur: 3200; loop: true; easing: easeInOutSine">
+
+                <!-- Thin 3D depth layer to improve AR realism -->
+                <a-box width="1.72" height="1.07" depth="0.02" position="0 -0.012 0"
+                    material="color: #040814; opacity: 0.95; metalness: 0.2; roughness: 0.65">
+                </a-box>
 
                 <!-- Card background (dark matte) -->
                 <a-plane rotation="-90 0 0" width="1.7" height="1.05"
@@ -153,6 +159,11 @@
                 </a-text>
             </a-entity>
 
+            <!-- Soft shadow pad below floating card for depth cue -->
+            <a-circle position="0 0.03 0" rotation="-90 0 0" radius="0.75"
+                material="color: #000000; opacity: 0.18; side: double">
+            </a-circle>
+
             <!-- ── Rotating ring 1 (cyan, clockwise) ── -->
             <a-ring position="0 0.3 0" rotation="-90 0 0"
                 radius-inner="1.0" radius-outer="1.02"
@@ -198,6 +209,9 @@
             </a-entity>
 
         </a-marker>
+
+        <a-entity light="type: ambient; color: #ffffff; intensity: 0.9"></a-entity>
+        <a-entity light="type: directional; color: #aeeaff; intensity: 0.35" position="1 2 1"></a-entity>
 
         <!-- Camera entity (required by AR.js) -->
         <a-entity camera></a-entity>
