@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Surface AR Card | Dinesh S</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+      color: #eaf6ff;
+    }
+    #ui {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .top-bar {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .pill {
+      pointer-events: auto;
+      background: rgba(4, 12, 28, 0.7);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      backdrop-filter: blur(6px);
+    }
+    .link-btn {
+      text-decoration: none;
+      color: #00e5ff;
+      font-weight: 600;
+    }
+    .hint {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      background: rgba(4, 12, 28, 0.78);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      text-align: center;
+      pointer-events: none;
+      min-width: 250px;
+    }
+    #contact {
+      position: fixed;
+      right: 12px;
+      bottom: 88px;
+      width: min(220px, 60vw);
+      background: rgba(4, 12, 28, 0.82);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: 14px;
+      padding: 10px;
+      backdrop-filter: blur(7px);
+      pointer-events: auto;
+      display: none;
+      z-index: 11;
+    }
+    #contact.show { display: block; }
+    #contact h3 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #00e5ff;
+    }
+    #contact a {
+      display: block;
+      color: #dff9ff;
+      text-decoration: none;
+      font-size: 12px;
+      margin: 6px 0;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+    }
+    #not-supported {
+      position: fixed;
+      inset: 0;
+      background: #040812;
+      display: none;
+      place-items: center;
+      text-align: center;
+      z-index: 30;
+      padding: 24px;
+    }
+    #not-supported .box {
+      max-width: 460px;
+      border: 1px solid rgba(0,229,255,0.35);
+      border-radius: 14px;
+      padding: 18px;
+      background: rgba(6, 16, 36, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <div class="top-bar">
+      <div class="pill">Surface AR Mode: move phone to detect floor/table, then tap screen</div>
+      <a class="pill link-btn" href="index.html">Marker Mode</a>
+    </div>
+    <div id="contact">
+      <h3>DINESH S</h3>
+      <a href="tel:+918056129665">Call</a>
+      <a href="https://wa.me/918056129665" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:personalaccdinesh@gmail.com">Email</a>
+      <a href="https://www.dinesh-ai.tech" target="_blank" rel="noopener">Portfolio</a>
+      <a href="https://github.com/itzdineshx" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/dinesh-xo" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div id="hint" class="hint">Tap Start AR, move phone slowly, then tap to place card.</div>
+  </div>
+
+  <div id="not-supported">
+    <div class="box">
+      <h2>Surface AR Not Supported</h2>
+      <p>This mode needs WebXR hit-test support (typically Android Chrome).</p>
+      <p>Use Marker mode if your browser does not support it.</p>
+      <a class="link-btn" href="index.html">Open Marker Mode</a>
+    </div>
+  </div>
+
+  <script type="module" src="surface.js"></script>
+</body>
+</html>

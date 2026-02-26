@@ -29,6 +29,8 @@ visiting_card_ar/
 ├── style.css       # All styling (glassmorphism, neon accents, animations)
 ├── app.js          # Application logic (marker events, voice, toggles)
 ├── marker.html     # Printable Hiro marker page with instructions
+├── surface.html    # Surface placement mode (WebXR hit-test)
+├── surface.js      # WebXR placement logic (tap-to-place on floor/table)
 └── README.md       # This file
 ```
 
@@ -71,6 +73,16 @@ npx serve .
 - Open `marker.html` on your computer screen (or print it)
 - Point your phone camera at the marker
 - The 3D card + contact overlay will appear!
+
+### Optional: Surface AR mode (place on real table/floor)
+
+- Open `surface.html` (or `https://YOUR_USERNAME.github.io/visiting_card_ar/surface.html`)
+- Tap **Start AR**
+- Move phone slowly to detect surface
+- Tap once to place the card on the detected surface
+
+> Surface mode needs WebXR hit-test support (usually Android Chrome).
+> If unsupported on your device/browser, use marker mode (`index.html`).
 
 ---
 
