@@ -91,7 +91,6 @@
          3D elements that appear on the Hiro marker
          ============================================ -->
     <a-scene
-        embedded
         arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false; detectionMode: mono;"
         vr-mode-ui="enabled: false"
         renderer="antialias: true; alpha: true"
@@ -103,7 +102,7 @@
             smoothTolerance="0.01" smoothThreshold="2">
 
             <!-- ── Floating card container with up/down animation ── -->
-            <a-entity id="card-3d" position="0 0.15 0"
+            <a-entity id="card-3d" position="0 0.15 0" rotation="90 0 0"
                 animation="property: position; to: 0 0.45 0; dir: alternate; dur: 2500; loop: true; easing: easeInOutSine">
 
                 <!-- Card background (dark matte) -->

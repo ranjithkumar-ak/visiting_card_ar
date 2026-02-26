@@ -72,14 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fallback check: if no AR.js video appears after startup, show guidance
-    setTimeout(() => {
-        const video = document.querySelector('#arjs-video') || document.querySelector('a-scene video') || document.querySelector('video');
-        const hasVideo = !!(video && video.readyState >= 2 && video.videoWidth > 0);
-        if (!hasVideo && !markerVisible) {
-            showCameraError('No camera feed detected. Open this URL in Safari (iPhone) or Chrome (Android), then allow camera and refresh.');
-        }
-    }, 12000);
+    // Let AR.js fully control camera startup; no manual fallback timer
 
 
     /* ============================================
