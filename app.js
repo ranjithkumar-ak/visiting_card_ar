@@ -36,50 +36,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* ============================================
-       0b. CAMERA ACCESS CHECK
-       Attempt to get camera before AR.js does, so we can show
-       a helpful error if it fails.
+       0b. CAMERA ERROR DETECTION
+       Instead of grabbing the camera ourselves (which conflicts
+       with AR.js), we listen for AR.js camera errors and also
+       set a timeout – if the video never starts, show the error.
        ============================================ */
-    async function checkCamera() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-            // Camera works — stop the test stream immediately
-            stream.getTracks().forEach(t => t.stop());
-            console.log('[AR] Camera access granted.');
-            return true;
-        } catch (err) {
-            console.error('[AR] Camera access failed:', err.name, err.message);
-            showCameraError(err);
-            return false;
-        }
-    }
-
-    function showCameraError(err) {
+    function showCameraError(reason) {
         loadingScreen.classList.add('hidden');
         scanOverlay.classList.add('hidden');
-        cameraError.classList.remove('camera-error-hidden');
-        cameraError.classList.add('camera-error-visible');
-
-        const reason = document.getElementById('error-reason');
-        if (err.name === 'NotAllowedError') {
-            reason.textContent = 'Camera permission was denied. Please allow camera access and refresh.';
-        } else if (err.name === 'NotFoundError') {
-            reason.textContent = 'No camera found on this device.';
-        } else if (err.name === 'NotReadableError') {
-            reason.textContent = 'Camera is in use by another app. Close it and retry.';
-        } else if (!isSecure) {
-            reason.textContent = 'Camera blocked — this page must be served over HTTPS.';
-        } else {
-            reason.textContent = 'Camera error: ' + (err.message || err.name);
+        if (cameraError) {
+            cameraError.classList.remove('camera-error-hidden');
+            cameraError.classList.add('camera-error-visible');
         }
+        const reasonEl = document.getElementById('error-reason');
+        if (reasonEl && reason) reasonEl.textContent = reason;
     }
 
-    // Run camera check
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        checkCamera();
+    // If camera API doesn't even exist (non-HTTPS), show error immediately
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showCameraError('Camera API not available. This page must be opened over HTTPS.');
     } else {
-        // mediaDevices API not available (insecure context)
-        showCameraError({ name: 'NotSupportedError', message: 'Camera API not available. Use HTTPS.' });
+        // Give AR.js time to start the camera. If after 12s there's still
+        // no video playing, assume camera failed.
+        setTimeout(() => {
+            const video = document.querySelector('video');
+            const hasVideo = video && video.readyState >= 2 && video.videoWidth > 0;
+            if (!hasVideo && !markerVisible) {
+                // Check if it's a permission issue vs other error
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        // Camera actually works — AR.js may just be slow, do nothing
+                        stream.getTracks().forEach(t => t.stop());
+                    })
+                    .catch(err => {
+                        if (err.name === 'NotAllowedError') {
+                            showCameraError('Camera permission was denied. Tap the 🔒 icon in the address bar → Allow Camera, then refresh.');
+                        } else if (err.name === 'NotFoundError') {
+                            showCameraError('No camera found on this device.');
+                        } else if (!isSecure) {
+                            showCameraError('Camera blocked — this page must be served over HTTPS.');
+                        } else {
+                            showCameraError('Camera error: ' + (err.message || err.name));
+                        }
+                    });
+            }
+        }, 12000);
     }
 
 
